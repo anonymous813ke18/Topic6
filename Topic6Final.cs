@@ -13,7 +13,7 @@ namespace Topic6
     public partial class Topic6Final : Form
     {
         String enteredTxt = "";
-        Boolean inputPermit, withdrawing, reciept;
+        Boolean inputPermit, withdrawing, reciept, confirm,deny;
         Accounts a1, a2, a3, a4, current = null;
         public Topic6Final()
         {
@@ -45,13 +45,18 @@ namespace Topic6
 
         private void buttonBAL_Click(object sender, EventArgs e)
         {
+            if (current == null)
+                return;
             label2.Text = "The balance is = "+current.getBalance();
         }
 
         private void buttonWIT_Click(object sender, EventArgs e)
         {
+            if (current == null)
+                return;
             txtOutput.Text = "Enter amount here";
             enteredTxt = "";
+            inputPermit = true;
             withdrawing = true;
             reciept = false;
             //MessageBox.Show("Press CONFIRM to go ahead with the transaction\nPress DENY to cancel the transaction.");
@@ -59,7 +64,10 @@ namespace Topic6
 
         private void buttonWITR_Click(object sender, EventArgs e)
         {
+            if (current == null)
+                return;
             txtOutput.Text = "Enter amount here";
+            inputPermit = true;
             enteredTxt = "";
             withdrawing = true;
             reciept = true;
@@ -68,52 +76,100 @@ namespace Topic6
 
         private void buttonCON_Click(object sender, EventArgs e)
         {
-            if (current == null)
+            if (enteredTxt == "") 
+                confirm = false;
+            else
+                confirm = true;
+            if (confirm == true)
             {
-                current = FindAccount(enteredTxt);
-            }
-            if (current != null)
-            {
-                if (withdrawing)
+
+                inputPermit = false;
+                if (current == null)
                 {
-                    if (reciept)
+                    current = FindAccount(enteredTxt);
+                }
+                if (current != null)
+                {
+                    if (withdrawing)
                     {
-                        current.withdraw(int.Parse(enteredTxt));
-                        enteredTxt = "The transaction was successfull.";
-                        updateDisplay();
-                        label2.Text = "The balance is = " + current.getBalance();
-                        MessageBox.Show(current.getLastTransaction());
+                        if (reciept)
+                        {
+                            if (current.withdraw(int.Parse(enteredTxt)))
+                            {
+                                enteredTxt = "The transaction was successfull.";
+                                updateDisplay();
+                                enteredTxt = "";
+                                label2.Text = "The balance is = " + current.getBalance();
+                                MessageBox.Show(current.getLastTransaction());
+                            }
+                            else
+                            {
+                                enteredTxt = "The transaction was unsucessfull.";
+                                updateDisplay();
+                                enteredTxt = "";
+                                return;
+                            }
+                        }
+                        else
+                        {                            
+                            if (current.withdraw(int.Parse(enteredTxt)))
+                            {
+                                enteredTxt = "The transaction was successfull.";
+                                updateDisplay();
+                                enteredTxt = "";
+                                label2.Text = "The balance is = " + current.getBalance();
+                            }
+                            else
+                            {
+                                enteredTxt = "The transaction was unsucessfull.";
+                                updateDisplay();
+                                enteredTxt = "";
+                                return;
+                            }
+                        }
                     }
                     else
                     {
-                        current.withdraw(int.Parse(enteredTxt));
-                        enteredTxt = "The transaction was successfull.";
+                        enteredTxt = "Logged in - Choose a transaction.";
                         updateDisplay();
-                        label2.Text = "The balance is = " + current.getBalance();
+                        enteredTxt = "";
                     }
                 }
                 else
                 {
-                    enteredTxt = "Logged in - Choose a transaction.";
-                    updateDisplay();
+                    txtOutput.Text = "Invalid PIN";
+                    inputPermit = true;
+                    enteredTxt = "";
                 }
             }
             else
-            {
-                txtOutput.Text = "Invalid PIN";
-                inputPermit = true;
-                enteredTxt = "";
-            }
+                return;
         }
 
         private void buttonDEN_Click(object sender, EventArgs e)
         {
-            
+            if (current == null)
+                return;
+            if (enteredTxt == "")
+                deny = false;
+            else
+                deny = true;
+            if (deny)
+            {
+                txtOutput.Text = "The transaction was cancelled.\nChoose another transaction.";
+                enteredTxt = "";
+                inputPermit = false;
+            }
+            else
+                return;
         }
 
         private void buttonEXIT_Click(object sender, EventArgs e)
         {
-
+            label2.Text = "Enter PIN here.";
+            enteredTxt = "";
+            withdrawing = false; reciept = false; confirm = false;
+            current = null; updateDisplay();
         }
 
         private void button7_Click(object sender, EventArgs e)
@@ -203,6 +259,8 @@ namespace Topic6
 
         private void buttonC_Click(object sender, EventArgs e)
         {
+            if (inputPermit == false)
+                return;
             enteredTxt = "";
             updateDisplay();
         }
