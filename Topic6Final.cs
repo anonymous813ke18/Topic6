@@ -14,14 +14,15 @@ namespace Topic6
     {
         String enteredTxt = "";
         Boolean inputPermit, withdrawing, reciept, confirm,deny;
-        Accounts a1, a2, a3, a4, current = null;
+        Accounts current = null;
+        List<Accounts> accountList = new List<Accounts>();
         public Topic6Final()
         {
             InitializeComponent();
-            a1 = new Accounts("1234", 500000);
-            a2 = new Accounts("5678", 100000);
-            a3 = new Accounts("9999", 150000);
-            a4 = new Accounts("6969", 200000);
+            accountList.Add(new Accounts("1234", 500000));
+            accountList.Add(new Accounts("5678", 100000));
+            accountList.Add(new Accounts("9999", 150000));
+            accountList.Add(new Accounts("6969", 200000));
             inputPermit = true;
         }
 
@@ -32,14 +33,20 @@ namespace Topic6
 
         public Accounts FindAccount(String enteredText)
         {
-            if (a1.checkPin(enteredText))
-                return a1;
-            if (a2.checkPin(enteredText)) 
-                return a2;
-            if (a3.checkPin(enteredText))
-                return a3;
-            if (a4.checkPin(enteredText))
-                return a4;
+
+            //if (a1.checkPin(enteredText))
+            //    return a1;
+            //if (a2.checkPin(enteredText)) 
+            //    return a2;
+            //if (a3.checkPin(enteredText))
+            //    return a3;
+            //if (a4.checkPin(enteredText))
+            //    return a4;
+            foreach (Accounts account in accountList)
+            {
+                if (account.checkPin(enteredText))
+                    return account;
+            }
             return null;
         }
 
